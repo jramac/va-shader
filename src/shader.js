@@ -25,7 +25,7 @@ const emissiveMaterial = new THREE.ShaderMaterial({
         void main() {
             vec4 c = texture2D(tDiffuse, vUv);
 
-            vec2 toCenter = vec2(0.5,0.8)-vUv;
+            vec2 toCenter = vec2(0.5,0.5)-vUv;
 
             vec4 original = c;
 
