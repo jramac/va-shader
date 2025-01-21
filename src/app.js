@@ -19,16 +19,20 @@ lightSource.position.set(0, 5, 0);
 scene.add(lightSource);
 
 // A cube that gets illuminated
+const emissiveMaterial = new THREE.MeshStandardMaterial({
+    color: 0x000000, // Base color
+    emissive: 0xffffff, // Yellow glow
+    emissiveIntensity: 0.2, // Adjust brightness
+});
 const cubeGeometry = new THREE.BoxGeometry(2, 2, 2);
-const cubeMaterial = new THREE.MeshLambertMaterial({ color: 0x888888 });
-const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+const cube = new THREE.Mesh(cubeGeometry, emissiveMaterial);
 cube.position.set(0, 0, 0);
 scene.add(cube);
 
 // Add a directional light
 const light = new THREE.DirectionalLight(0xffffff, 2);
 light.position.set(0, 5, 0);
-scene.add(light);
+//scene.add(light);
 
 camera.position.z = 5;
 camera.position.y = 7;
@@ -42,7 +46,7 @@ controls.enableDamping = true;
 const GodRaysDepthMaskShader = new THREE.ShaderMaterial({
     uniforms: {
         tDiffuse: { value: null },
-        threshold: { value: 0.14 } // Defines what is considered "bright"
+        threshold: { value: 0.2 } // Defines what is considered "bright"
     },
     vertexShader: /* glsl */`
         varying vec2 vUv;
@@ -93,7 +97,7 @@ const GodRaysShader = new THREE.ShaderMaterial({
 
         void main() {
             vec2 texCoord = vUv;
-            vec2 deltaTexCoord = (rand(vUv.yx) + ((texCoord - lightPosition) * density)) / 40.0;
+            vec2 deltaTexCoord = (((texCoord - lightPosition) * density)) / 40.0;
             vec4 color = texture2D(tDiffuse, texCoord);
             float illuminationDecay = 1.0;
 
@@ -138,7 +142,8 @@ const bloomPass = new UnrealBloomPass(
     0.85 // Threshold
 );
 composer.addPass(bloomPass);
-
+const gridHelper = new THREE.GridHelper(10, 10); // Size: 10, Divisions: 10
+scene.add(gridHelper);
 function animate() {
     requestAnimationFrame(animate);
     updateLightPosition();
